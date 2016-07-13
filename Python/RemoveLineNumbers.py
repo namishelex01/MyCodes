@@ -10,7 +10,7 @@ def startregex():
    fw = open(name,'w')
    with open(FILE_PATH,'r') as f:
        for line in f:
-           m = re.sub('^(\s*)(\d*)(\s*)','',line)
+           m = re.sub('^(\s*)(\d*)(\s)','',line)
            fw.write(m)
    f.closed
    fw.close()
