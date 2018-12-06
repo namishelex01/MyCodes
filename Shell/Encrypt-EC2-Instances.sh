@@ -2,17 +2,21 @@
 
 name=$2
 instanceId=$1
+
+################################
+# Hardcoded for Singapore region
 region="ap-southeast-1"
+################################
 
 function AllChecksDone {
 	#########################################
 	echo "[***] Check the arguments have been passed correctly"
 	if [ -z "$name" ] || [ -z "$instanceId" ]
 	then
-			echo " "
-			echo "Invalid arguments."
 		echo " "
-			exit 1
+		echo "Invalid arguments."
+		echo " "
+		exit 1
 	fi
 	#########################################
 	verifyInstance=$(aws ec2 describe-instances --region "$region" --filters Name=instance-id,Values="$instanceId")
@@ -21,10 +25,10 @@ function AllChecksDone {
 	echo "[***] Verify the Instance Exist"
 	if [ -z "$verifyId" ]
 	then
-			echo " "
-			echo " Instance Id: $instanceId is not a valid Id"
 		echo " "
-			exit 1
+		echo " Instance Id: $instanceId is not a valid Id"
+		echo " "
+		exit 1
 	fi
 }	
 
@@ -52,9 +56,9 @@ function CreateSnapshotFromVolume {
 	#########################################
 	response=1
 	while [  "$response" -ne 0 ]; do
-			echo "Waiting for Snapshot $snapshotId to become available...."
-			aws ec2 wait snapshot-completed --snapshot-id "$snapshotId" --region "$region"
-			response=$?
+		echo "Waiting for Snapshot $snapshotId to become available...."
+		aws ec2 wait snapshot-completed --snapshot-id "$snapshotId" --region "$region"
+		response=$?
 	done
 	#########################################
 	echo "[***] Snapshot created"
@@ -81,9 +85,9 @@ function CreateEncryptedCopy {
 	#########################################
 	response=1
 	while [  "$response" -ne 0 ]; do
-			echo "Waiting for Encrypted Snapshot $imageId to become available...."
-			aws ec2 wait snapshot-completed --snapshot-id "$imageId" --region "$region"
-			response=$?
+		echo "Waiting for Encrypted Snapshot $imageId to become available...."
+		aws ec2 wait snapshot-completed --snapshot-id "$imageId" --region "$region"
+		response=$?
 	done
 }
 
@@ -110,9 +114,9 @@ function CreateVolumeFromSnapshot {
 	#########################################
 	response=1
 	while [  "$response" -ne 0 ]; do
-			echo "Waiting for Encrypted Snapshot $imageId to become available...."
-			aws ec2 wait volume-available --volume-ids "$newvolumeId" --region "$region"
-			response=$?
+		echo "Waiting for Encrypted Snapshot $imageId to become available...."
+		aws ec2 wait volume-available --volume-ids "$newvolumeId" --region "$region"
+		response=$?
 	done
 	echo "[***] The volume $newvolumeId is now ready for use"
 }
@@ -139,8 +143,8 @@ function StopInstance {
 	echo $stop_response
 	current_state=$(CheckCurrentStateOfInstance)
 	while [ "$current_state" -ne 80 ]; do
-			current_state=$(CheckCurrentStateOfInstance)
-			sleep 15
+		current_state=$(CheckCurrentStateOfInstance)
+		sleep 15
 	done
 	echo "[***] Instance is now stopped"
 }
@@ -174,8 +178,8 @@ function StartInstance {
 	start_response=$(aws ec2 start-instances --instance-ids "$instanceId" --region "$region")
 	current_state=$(CheckCurrentStateOfInstance)
 	while [ "$current_state" -eq 16 ]; do
-			current_state=$(CheckCurrentStateOfInstance)
-			sleep 15
+		current_state=$(CheckCurrentStateOfInstance)
+		sleep 15
 	done
 	echo "[***] Instance is now running"
 }
